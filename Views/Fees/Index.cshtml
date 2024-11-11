@@ -1,0 +1,88 @@
+﻿@model IEnumerable<CustomMVC.Models.Fee>
+
+@{
+    Layout = "_Layout";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DocumentNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Agent)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Warehouse)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Good)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Amount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FeeAmount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReceiptDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PaymentDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ExportDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DocumentNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Agent.FullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Warehouse.WarehouseNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Good.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Amount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FeeAmount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReceiptDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PaymentDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ExportDate)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>
+

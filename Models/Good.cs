@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CustomApplication.Models;
+namespace CustomMVC.Models;
 
 public partial class Good
 {
