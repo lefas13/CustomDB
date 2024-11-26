@@ -1,0 +1,76 @@
+﻿@model Fee
+
+@{
+    ViewData["Title"] = "Удаление";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Delete</h1>
+
+<h3>Вы уверены, что хотите удалить эту запись?</h3>
+<div>
+    <h4>Пошлина</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Дата получения
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ReceiptDate)
+        </dd>
+        <dt class = "col-sm-2">
+            Количество товаров
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Amount)
+        </dd>
+        <dt class = "col-sm-2">
+            Номер документа
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DocumentNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            Стоимость пошлины
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FeeAmount)
+        </dd>
+        <dt class = "col-sm-2">
+            Дата оплаты
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PaymentDate)
+        </dd>
+        <dt class = "col-sm-2">
+            Дата отправки
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ExportDate)
+        </dd>
+        <dt class = "col-sm-2">
+            Номер агента
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Agent.IdNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            Название товара
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Good.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            Номер склада
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Warehouse.WarehouseNumber)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="FeeId" />
+        <input type="submit" value="Удалить" class="btn btn-danger" /> |
+        <a asp-action="Index">Назад</a>
+    </form>
+</div>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using CustomMVC.Models;
-using System.Runtime.ConstrainedExecution;
 
 namespace CustomMVC.Data
 {
@@ -19,7 +18,7 @@ namespace CustomMVC.Data
             Random randObj = new(1);
 
             // Заполнение таблицы агентов
-            string[] agentNames = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" ];
+            string[] agentNames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
             foreach (var agent in agentNames)
             {
                 db.Agents.Add(new Agent
@@ -31,7 +30,7 @@ namespace CustomMVC.Data
             db.SaveChanges();
 
             // Заполнение типов товаров
-            string[] nameTypes = [ "Мебель", "Электроника", "Одежда", "Медиакаменты", "Продукты питания", "Химия", "Транспорт" ];
+            string[] nameTypes = ["Мебель", "Электроника", "Одежда", "Медиакаменты", "Продукты питания", "Химия", "Транспорт"];
             int j = 1;
             foreach (var goodType in nameTypes)
             {
@@ -46,7 +45,7 @@ namespace CustomMVC.Data
             db.SaveChanges();
 
             // Заполнение складов
-            string[] warehouseNumbers = [ "1111", "2222", "3333", "4444", "5555", "6666", "7777" ];
+            string[] warehouseNumbers = ["1111", "2222", "3333", "4444", "5555", "6666", "7777"];
             foreach (var warehouse in warehouseNumbers)
             {
                 db.Warehouses.Add(new Warehouse

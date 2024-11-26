@@ -1,6 +1,6 @@
+using CustomMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using CustomMVC.Models;
 
 namespace CustomMVC.Controllers
 {
