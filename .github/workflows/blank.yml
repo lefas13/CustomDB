@@ -1,20 +1,19 @@
-name: build
+name: .NET
 
 on:
   push:
   pull_request:
-    branches: [ main ]
+    branches: [ lab5 ]
     paths:
-    - '/.cs'
-    - '/.csproj'
+    - '**.cs'
+    - '**.csproj'
 
 env:
   DOTNET_VERSION: '8.0' # The .NET SDK version to use
 
 jobs:
-  build:
-
-    name: build-${{matrix.os}}
+  build-and-test:
+    name: build-and-test-${{matrix.os}}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -27,8 +26,14 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Install dependencies
-      run: dotnet restore rpbd.sln
+    - name: Install dependencies for main project
+      run: dotnet restore WebApplication2.sln
 
+    - name: Install dependencies for test project
+      run: dotnet restore WebApplication2.sln
+      
     - name: Build
-      run: dotnet build rpbd.sln --configuration Release --no-restore
+      run: dotnet build WebApplication2.sln --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test WebApplication2.sln --no-restore --verbosity normal
