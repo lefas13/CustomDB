@@ -1,4 +1,5 @@
-﻿using CustomMVC.Data;
+﻿using CustomMVC.Areas.Identity.Data;
+using CustomMVC.Data;
 
 namespace CustomMVC.Middleware
 {
@@ -10,6 +11,7 @@ namespace CustomMVC.Middleware
         {
             if (!(context.Session.Keys.Contains("starting")))
             {
+                DbUserInitializer.Initialize(context).Wait();
                 DbInitializer.Initialize(dbContext);
                 context.Session.SetString("starting", "Yes");
             }

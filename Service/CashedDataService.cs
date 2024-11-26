@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using CustomMVC.Models;
 using CustomMVC.Data;
+using CustomMVC.Models;
 
 namespace CustomMVC.Service
 {

@@ -1,45 +1,93 @@
-﻿@model IEnumerable<CustomMVC.Models.Agent>
+﻿@using CustomMVC.ViewModels;
+@using CustomMVC.ViewModels.AgentViewModel;
+@model AgentViewModel;
 
 @{
-    Layout = "_Layout";
+    ViewData["Title"] = "Агенты";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string? FullName = Model.FilterAgentViewModel.FullName;
+    string? IdNumber = Model.FilterAgentViewModel.IdNumber;
 }
 
-<!DOCTYPE html>
+<h2 class="mb-4">Агенты</h2>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-    <table class="table">
-        <thead>
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-primary">Добавить новую запись</a>
+</div>
+
+@using (Html.BeginForm("Index", "Agents", FormMethod.Get, new { @class = "form-inline mb-3" }))
+{
+    <fieldset class="form-group">
+        <label for="FullName" class="mr-2">Полное имя агента:</label>
+        @Html.TextBox("FullName", FullName, new { @class = "form-control mr-2", @id = "FullName" })
+    </fieldset>
+    <fieldset class="form-group">
+        <label for="IdNumber" class="mr-2">Номер агента:</label>
+        @Html.TextBox("IdNumber", IdNumber, new { @class = "form-control mr-2", @id = "IdNumber" })
+    </fieldset>
+
+    <input type="submit" value="Найти" class="btn btn-outline-success mt-1" />
+}
+
+<table class="table table-striped table-bordered">
+    <thead class="thead-light">
+        <tr>
+            <th style="width: 150px;">
+                <a asp-action="Index"
+                   asp-route-sortOrder="@Model.SortViewModel.FullNameSort"
+                   asp-route-FullName="@FullName"
+                   style="color: inherit; text-decoration: none; display: inline-flex; align-items: center;">
+                    @Html.DisplayNameFor(model => model.FilterAgentViewModel.FullName)
+
+                    @if (Model.SortViewModel.FullNameSort == SortState.FullNameAsc)
+                    {
+                        <span class="bi bi-arrow-up" style="margin-left: 5px;"></span>
+                    }
+                    else if (Model.SortViewModel.FullNameSort == SortState.FullNameDesc)
+                    {
+                        <span class="bi bi-arrow-down" style="margin-left: 5px;"></span>
+                    }
+                </a>
+            </th>
+            <th style="width: 150px;">
+                <a asp-action="Index"
+                   asp-route-sortOrder="@Model.SortViewModel.IdNumberSort"
+                   asp-route-IdNumber="@IdNumber"
+                   style="color: inherit; text-decoration: none; display: inline-flex; align-items: center;">
+                    @Html.DisplayNameFor(model => model.FilterAgentViewModel.IdNumber)
+
+                    @if (Model.SortViewModel.IdNumberSort == SortState.IdNumberAsc)
+                    {
+                        <span class="bi bi-arrow-up" style="margin-left: 5px;"></span>
+                    }
+                    else if (Model.SortViewModel.IdNumberSort == SortState.IdNumberDesc)
+                    {
+                        <span class="bi bi-arrow-down" style="margin-left: 5px;"></span>
+                    }
+                </a>
+            </th>
+            <th style="width: 150px;" class="text-center">Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Agents)
+        {
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.FullName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.IdNumber)
-                </th>
-                <th></th>
+                <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                <td>@Html.DisplayFor(modelItem => item.IdNumber)</td>
+                <td>
+                    <div class="btn-group d-flex" role="group" aria-label="Basic example">
+                        <a asp-action="Edit" asp-route-id="@item.AgentId" class="btn btn-sm btn-primary me-1">Редактировать</a>
+                        <a asp-action="Details" asp-route-id="@item.AgentId" class="btn btn-sm btn-secondary me-1">Информация</a>
+                        <a asp-action="Delete" asp-route-id="@item.AgentId" class="btn btn-sm btn-danger">Удалить</a>
+                    </div>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FullName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IdNumber)
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</body>
-</html>
+        }
+    </tbody>
+</table>
+
+<page-link page-model="Model.PageViewModel" page-action="Index"
+           page-url-FullName="@FullName"
+           page-url-IdNumber="@IdNumber"
+           page-url-sortOrder="@(Model.SortViewModel.CurrentState)"></page-link>
