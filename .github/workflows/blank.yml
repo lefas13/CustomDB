@@ -28,13 +28,13 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Install dependencies
-      run: dotnet restore WebApplication2.sln
+      run: dotnet restore C:/Users/User/Desktop/temp/CustomMVC.csproj
 
     - name: Install dependencies for test project
-      run: dotnet restore WebApplication2.sln
+      run: dotnet restore C:/Users/User/Desktop/Tests/Tests.csproj
 
     - name: Build
-      run: dotnet build WebApplication2.sln --configuration Release --no-restore
+      run: dotnet C:/Users/User/Desktop/temp/CustomMVC.csproj --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test WebApplication2.sln --no-restore --verbosity normal
+      run: dotnet test C:/Users/User/Desktop/Tests/Tests.csproj --no-restore --verbosity normal
