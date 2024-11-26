@@ -1,0 +1,93 @@
+﻿@using CustomMVC.ViewModels;
+@using CustomMVC.ViewModels.GoodViewModel;
+@model GoodViewModel;
+
+@{
+    ViewData["Title"] = "Товары";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string? Good = Model.FilterGoodViewModel.Good;
+    string? Type = Model.FilterGoodViewModel.Type;
+}
+
+<h2 class="mb-4">Товары</h2>
+
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-primary">Добавить новую запись</a>
+</div>
+
+@using (Html.BeginForm("Index", "Goods", FormMethod.Get, new { @class = "form-inline mb-3" }))
+{
+    <fieldset class="form-group">
+        <label for="Good" class="mr-2">Название товара:</label>
+        @Html.TextBox("Good", Good, new { @class = "form-control mr-2", @id = "Good" })
+    </fieldset>
+    <fieldset class="form-group">
+        <label for="Type" class="mr-2">Тип товара:</label>
+        @Html.TextBox("Type", Type, new { @class = "form-control mr-2", @id = "Type" })
+    </fieldset>
+
+    <input type="submit" value="Найти" class="btn btn-outline-success mt-1" />
+}
+
+<table class="table table-striped table-bordered">
+    <thead class="thead-light">
+        <tr>
+            <th style="width: 150px;">
+                <a asp-action="Index"
+                   asp-route-sortOrder="@Model.SortViewModel.GoodSort"
+                   asp-route-Good="@Good"
+                   style="color: inherit; text-decoration: none; display: inline-flex; align-items: center;">
+                    @Html.DisplayNameFor(model => model.FilterGoodViewModel.Good)
+
+                    @if (Model.SortViewModel.GoodSort == SortState.GoodAsc)
+                    {
+                        <span class="bi bi-arrow-up" style="margin-left: 5px;"></span>
+                    }
+                    else if (Model.SortViewModel.GoodSort == SortState.GoodDesc)
+                    {
+                        <span class="bi bi-arrow-down" style="margin-left: 5px;"></span>
+                    }
+                </a>
+            </th>
+            <th style="width: 150px;">
+                <a asp-action="Index"
+                   asp-route-sortOrder="@Model.SortViewModel.TypeSort"
+                   asp-route-Type="@Type"
+                   style="color: inherit; text-decoration: none; display: inline-flex; align-items: center;">
+                    @Html.DisplayNameFor(model => model.FilterGoodViewModel.Type)
+
+                    @if (Model.SortViewModel.TypeSort == SortState.TypeAsc)
+                    {
+                        <span class="bi bi-arrow-up" style="margin-left: 5px;"></span>
+                    }
+                    else if (Model.SortViewModel.TypeSort == SortState.TypeDesc)
+                    {
+                        <span class="bi bi-arrow-down" style="margin-left: 5px;"></span>
+                    }
+                </a>
+            </th>
+            <th style="width: 150px;" class="text-center">Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Goods)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.GoodType.Name)</td>
+                <td>
+                    <div class="btn-group d-flex" role="group" aria-label="Basic example">
+                        <a asp-action="Edit" asp-route-id="@item.GoodId" class="btn btn-sm btn-primary me-1">Редактировать</a>
+                        <a asp-action="Details" asp-route-id="@item.GoodId" class="btn btn-sm btn-secondary me-1">Информация</a>
+                        <a asp-action="Delete" asp-route-id="@item.GoodId" class="btn btn-sm btn-danger">Удалить</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<page-link page-model="Model.PageViewModel" page-action="Index"
+           page-url-Good="@Good"
+           page-url-Type="@Type"
+           page-url-sortOrder="@(Model.SortViewModel.CurrentState)"></page-link>
