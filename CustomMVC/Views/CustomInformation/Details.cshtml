@@ -1,0 +1,144 @@
+﻿@model CustomMVC.ViewModels.CustomInformationViewModel.CustomInformationViewModel
+
+@{
+    ViewData["Title"] = "Детали склада и агента";
+}
+
+<h1>Детали склада: @Model.Warehouses.FirstOrDefault(w => w.WarehouseId == Model.SelectedWarehouseId)?.WarehouseNumber и агента: @Model.Agents.FirstOrDefault(a => a.AgentId == Model.SelectedAgentId)?.FullName</h1>
+
+@if (Model.GoodsDetails != null && Model.GoodsDetails.TryGetValue(Model.SelectedWarehouseId, out var goods))
+{
+    <h3>Товары на складе:</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Название товара</th>
+                <th>Количество</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var good in goods)
+            {
+                <tr>
+                    <td>@good.Name</td>
+                    <td>@good.Count</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Нет доступных товаров на выбранном складе.</p>
+}
+
+<h2>Общая информация о товарах</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название товара</th>
+            <th>Количество на всех складах</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.TotalGoodsCount)
+        {
+            <tr>
+                <td>@item.Key</td>
+                <td>@item.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    @if (Model.PagingInfo.CurrentPage > 1)
+    {
+        <a asp-action="Details" asp-route-warehouseId="@Model.Warehouses.FirstOrDefault(w => w.WarehouseId == Model.SelectedWarehouseId)?" asp-route-pageNumber="@(Model.PagingInfo.CurrentPage - 1)">Назад</a>
+    }
+
+    @for (int i = 1; i <= (Model.PagingInfo.TotalItems + Model.PagingInfo.ItemsPerPage - 1) / Model.PagingInfo.ItemsPerPage; i++)
+    {
+        // Показываем первые 2 страницы
+        if (i <= 2)
+        {
+            <a asp-action="Details" asp-route-warehouseId="@Model.Warehouses.FirstOrDefault(w => w.WarehouseId == Model.SelectedWarehouseId)?" asp-route-pageNumber="@i">@i</a>
+        }
+        // Показываем текущую страницу
+        else if (i == Model.PagingInfo.CurrentPage)
+        {
+            <strong>@i</strong> <!-- Текущая страница -->
+        }
+        // Показываем последние 2 страницы
+        else if (i > (Model.PagingInfo.TotalItems + Model.PagingInfo.ItemsPerPage - 1) / Model.PagingInfo.ItemsPerPage - 2)
+        {
+            <a asp-action="Details" asp-route-warehouseId="@Model.Warehouses.FirstOrDefault(w => w.WarehouseId == Model.SelectedWarehouseId)?" asp-route-pageNumber="@i">@i</a>
+        }
+        // Показываем многоточие
+        else if (i == 3 && Model.PagingInfo.CurrentPage > 4)
+        {
+            <span>...</span>
+        }
+        else if (i == (Model.PagingInfo.TotalItems + Model.PagingInfo.ItemsPerPage - 1) / Model.PagingInfo.ItemsPerPage - 3 && Model.PagingInfo.CurrentPage < (Model.PagingInfo.TotalItems + Model.PagingInfo.ItemsPerPage - 1) / Model.PagingInfo.ItemsPerPage - 4)
+        {
+            <span>...</span>
+        }
+    }
+
+    @if (Model.PagingInfo.CurrentPage < (Model.PagingInfo.TotalItems + Model.PagingInfo.ItemsPerPage - 1) / Model.PagingInfo.ItemsPerPage)
+    {
+        <a asp-action="Details" asp-route-warehouseId="@Model.Warehouses.FirstOrDefault(w => w.WarehouseId == Model.SelectedWarehouseId)?" asp-route-pageNumber="@(Model.PagingInfo.CurrentPage + 1)">Вперед</a>
+    }
+</div>
+}
+}
+
+<h2>Количество товара на складе за период</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название товара</th>
+            <th>Количество</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.GoodsCountOnWarehouse)
+        {
+            <tr>
+                <td>@item.Key</td>
+                <td>@item.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Среднее время нахождения товара на складе</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название товара</th>
+            <th>Среднее время (дни)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.AverageStayTime)
+        {
+            <tr>
+                <td>@item.Key</td>
+                <td>@item.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Объем пошлин за период</h2>
+<p>Суммарные пошлины: @Model.TotalFeesForPeriod</p>
+
+<h2>Сумма пошлин по складу и агенту за текущий месяц</h2>
+<p>Сумма: @Model.FeesByWarehouseAndAgent</p>
+
+<h2>Итоговая сумма всех пошлин за текущий год</h2>
+<p>Сумма: @Model.TotalFeesForYear</p>

@@ -25,7 +25,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="ReceiptDate" class="control-label"></label>
-                <input asp-for="ReceiptDate" class="form-control" />
+                <input asp-for="ReceiptDate" class="form-control" type="date" />
                 <span asp-validation-for="ReceiptDate" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -45,17 +45,17 @@
             </div>
             <div class="form-group">
                 <label asp-for="FeeAmount" class="control-label"></label>
-                <input asp-for="FeeAmount" class="form-control" />
+                <input asp-for="FeeAmount" class="form-control" type="number" />
                 <span asp-validation-for="FeeAmount" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PaymentDate" class="control-label"></label>
-                <input asp-for="PaymentDate" class="form-control" />
+                <input asp-for="PaymentDate" class="form-control" type="date" />
                 <span asp-validation-for="PaymentDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ExportDate" class="control-label"></label>
-                <input asp-for="ExportDate" class="form-control" />
+                <input asp-for="ExportDate" class="form-control" type="date" />
                 <span asp-validation-for="ExportDate" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -80,13 +80,13 @@
             textInputs.forEach(input => {
                 input.addEventListener("input", function () {
                     // Проверка на числа
-                    } else if (this.value.trim() === "") { // Проверка на пустоту
-                        this.setCustomValidity("Поле не должно быть пустым.");
-                    } else {
-                        this.setCustomValidity("");
-                    }
-                });
+                } else if (this.value.trim() === "") { // Проверка на пустоту
+                    this.setCustomValidity("Поле не должно быть пустым.");
+                } else {
+                    this.setCustomValidity("");
+                }
             });
         });
+            });
     </script>
 }

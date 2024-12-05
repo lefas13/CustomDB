@@ -1,5 +1,4 @@
-﻿using CustomMVC.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CustomMVC.ViewModels.GoodViewModel
 {

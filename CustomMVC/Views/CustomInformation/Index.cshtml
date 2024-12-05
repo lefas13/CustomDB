@@ -1,0 +1,34 @@
+﻿@model CustomMVC.ViewModels.CustomInformationViewModel.CustomInformationViewModel
+
+@{
+    ViewData["Title"] = "Выбор склада и агента";
+}
+
+<h1>Выбор склада и агента</h1>
+
+<form method="get" asp-action="Details">
+    <div>
+        <label for="AgentSelect">Выберите агента:</label>
+        @Html.DropDownListFor(m => m.SelectedAgentId, new SelectList(Model.Agents, "AgentId", "FullName"), "Выберите агента", new { @id = "AgentSelect", @name = "selectedAgentId", required = "required" })
+    </div>
+    <div>
+        <label for="WarehouseSelect">Выберите склад:</label>
+        @Html.DropDownListFor(m => m.SelectedWarehouseId, new SelectList(Model.Warehouses, "WarehouseId", "WarehouseNumber"), "Выберите склад", new { @id = "WarehouseSelect", @name = "selectedWarehouseId", required = "required" })
+    </div>
+    <div>
+        <label>Выберите период:</label>
+        <input type="date" name="startDate" required />
+        <input type="date" name="endDate" required />
+    </div>
+    <button type="submit">Показать данные</button>
+
+    @if (ViewData.ModelState.IsValid == false)
+    {
+        <div style="color:red;">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p>@error.ErrorMessage</p>
+            }
+        </div>
+    }
+</form>

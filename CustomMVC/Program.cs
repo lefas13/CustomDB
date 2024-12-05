@@ -16,7 +16,7 @@ builder.Services.AddScoped<CachedDataService>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // ����� ����� ������
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -53,9 +53,18 @@ app.UseDbInitializer();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    // Добавьте явный маршрут для вашего контроллера, если нужно
+    endpoints.MapControllerRoute(
+        name: "customInfo",
+        pattern: "CustomInformation/{action=Index}/{id?}",
+        defaults: new { controller = "CustomInformation" });
+});
 
 app.MapRazorPages();
 

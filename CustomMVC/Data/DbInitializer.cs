@@ -18,46 +18,41 @@ namespace CustomMVC.Data
             Random randObj = new(1);
 
             // Заполнение таблицы агентов
-            string[] agentNames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
-            foreach (var agent in agentNames)
+            for (int i = 0; i < 500; i++)
             {
                 db.Agents.Add(new Agent
                 {
-                    FullName = "FullName " + agent,
-                    IdNumber = "ID " + agent
+                    FullName = "FullName " + i,
+                    IdNumber = "ID " + i
                 });
             }
             db.SaveChanges();
 
             // Заполнение типов товаров
-            string[] nameTypes = ["Мебель", "Электроника", "Одежда", "Медиакаменты", "Продукты питания", "Химия", "Транспорт"];
-            int j = 1;
-            foreach (var goodType in nameTypes)
+            for (int i = 0; i < 500; i++)
             {
                 db.GoodTypes.Add(new GoodType
                 {
-                    Name = goodType,
-                    Measurement = "Measurement " + j,
-                    AmountOfFee = j
+                    Name = "Type " + i,
+                    Measurement = "Measurement " + i,
+                    AmountOfFee = i
                 });
-                j++;
             }
             db.SaveChanges();
 
             // Заполнение складов
-            string[] warehouseNumbers = ["1111", "2222", "3333", "4444", "5555", "6666", "7777"];
-            foreach (var warehouse in warehouseNumbers)
+            for (int i = 0; i < 500; i++)
             {
                 db.Warehouses.Add(new Warehouse
                 {
-                    WarehouseNumber = warehouse,
+                    WarehouseNumber = "Num" + i,
                 });
             }
             db.SaveChanges();
 
             // Заполнение товаров
             var goodTypes = db.GoodTypes.ToList();
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 20000; i++)
             {
                 db.Goods.Add(new Good
                 {
@@ -70,7 +65,7 @@ namespace CustomMVC.Data
             // Заполнение пошлин
             var goods = db.Goods.ToList();
             var agents = db.Agents.ToList();
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 500; i++)
             {
                 var good = goods[randObj.Next(goods.Count)];
                 var agent = agents[randObj.Next(agents.Count)];

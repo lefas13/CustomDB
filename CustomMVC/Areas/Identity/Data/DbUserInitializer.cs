@@ -10,7 +10,7 @@ namespace CustomMVC.Areas.Identity.Data
             UserManager<ApplicationUser> userManager = context.RequestServices.GetRequiredService<UserManager<ApplicationUser>>();
             RoleManager<IdentityRole> roleManager = context.RequestServices.GetRequiredService<RoleManager<IdentityRole>>();
             string adminEmail = "fit@gmail.com";
-            string adminName = "fit@gmail.com";
+            string adminName = "fut";
 
             string password = "_Ww09876";
             if (await roleManager.FindByNameAsync("admin") == null)
