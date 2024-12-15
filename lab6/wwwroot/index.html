@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Список пошлин</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h2>Список пошлин</h2>
+    <form name="feeForm">
+        <input type="hidden" name="id" value="0" />
+        <div class="form-group col-md-5">
+            <label for="warehouseNumber">Номер склада:</label>
+            <input class="form-control" name="warehouseNumber" required />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="goodName">Название товара:</label>
+            <input class="form-control" name="goodName" required />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="agentName">Имя агента:</label>
+            <input class="form-control" name="agentName" required />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="receiptDate">Дата получения:</label>
+            <input class="form-control" name="receiptDate" type="date" required />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="amount">Количество:</label>
+            <input class="form-control" name="amount" type="number" required />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="documentNumber">Регистрационный номер:</label>
+            <input class="form-control" name="documentNumber" maxlength="20" required />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="feeAmount">Стоимость пошлины:</label>
+            <input class="form-control" name="feeAmount" type="number" step="0.01" required />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="paymentDate">Дата оплаты:</label>
+            <input class="form-control" name="paymentDate" type="date" />
+        </div>
+        <div class="form-group col-md-5">
+            <label for="exportDate">Дата отправки:</label>
+            <input class="form-control" name="exportDate" type="date" />
+        </div>
+        <div class="panel-body">
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <a id="reset" class="btn btn-secondary">Сбросить</a>
+        </div>
+    </form>
+    <table class="table table-condensed table-striped col-md-6">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Номер склада</th>
+                <th>Имя товара</th>
+                <th>Имя агента</th>
+                <th>Дата получения</th>
+                <th>Количество</th>
+                <th>Регистрационный номер</th>
+                <th>Стоимость пошлины</th>
+                <th>Дата оплаты</th>
+                <th>Дата отправки</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function GetFees() {
+            const response = await fetch("/api/fees", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok) {
+                const fees = await response.json();
+                fees.forEach(fee => {
+                    document.querySelector("tbody").append(row(fee));
+                });
+            }
+        }
+
+        async function GetFee(id) {
+            const response = await fetch("/api/fees/" + id, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok) {
+                const fee = await response.json();
+                const form = document.forms["feeForm"];
+                form.elements["id"].value = fee.feeId;
+                form.elements["warehouseNumber"].value = fee.Warehouse.warehouseNumber; // Assuming you have a way to map this
+                form.elements["productName"].value = fee.Good.name; // Assuming Good has a name property
+                form.elements["agentName"].value = fee.Agent.fullName; // Assuming Agent has a name property
+                form.elements["receiptDate"].value = fee.receiptDate;
+                form.elements["amount"].value = fee.amount;
+                form.elements["documentNumber"].value = fee.documentNumber;
+                form.elements["feeAmount"].value = fee.feeAmount;
+                form.elements["paymentDate"].value = fee.paymentDate;
+                form.elements["exportDate"].value = fee.exportDate;
+            }
+        }
+
+        async function SaveFee(data) {
+            const method = data.id == 0 ? "POST" : "PUT";
+            const response = await fetch("api/fees" + (method === "PUT" ? "" : ""), {
+                method: method,
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                const fee = await response.json();
+                reset();
+                const tbody = document.querySelector("tbody");
+                if (method === "POST") {
+                    tbody.append(row(fee));
+                } else {
+                    const existingRow = document.querySelector(`tr[data-rowid='${fee.feeId}']`);
+                    existingRow.replaceWith(row(fee));
+                }
+            }
+        }
+
+        async function DeleteFee(id) {
+            const response = await fetch("/api/fees/" + id, {
+                method: "DELETE",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok) {
+                const fee = await response.json();
+                document.querySelector(`tr[data-rowid='${fee.feeId}']`).remove();
+            }
+        }
+
+        function reset() {
+            document.forms["feeForm"].reset();
+            document.forms["feeForm"].elements["id"].value = 0;
+        }
+
+        function row(fee) {
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", fee.feeId);
+
+            tr.innerHTML = `
+                    <td>${fee.feeId}</td>
+                    <td>${fee.Warehouse.warehouseNumber}</td>
+                    <td>${fee.Good.name}</td>
+                    <td>${fee.Agent.fullName}</td>
+                    <td>${fee.receiptDate}</td>
+                    <td>${fee.amount}</td>
+                    <td>${fee.documentNumber}</td>
+                    <td>${fee.feeAmount}</td>
+                    <td>${fee.paymentDate || ''}</td>
+                    <td>${fee.exportDate || ''}</td>
+                    <td>
+                        <a style="cursor:pointer;padding:15px;" onclick="GetFee(${fee.feeId})">Изменить</a>
+                        <a style="cursor:pointer;padding:15px;" onclick="DeleteFee(${fee.feeId})">Удалить</a>
+                    </td>
+                `;
+            return tr;
+        }
+
+        document.getElementById("reset").addEventListener("click", e => {
+            e.preventDefault();
+            reset();
+        });
+
+        document.forms["feeForm"].addEventListener("submit", e => {
+            e.preventDefault();
+            const form = document.forms["feeForm"];
+            const data = {
+                feeId: form.elements["id"].value,
+                Warehouse: { warehouseNumber: form.elements["warehouseNumber"].value },
+                Good: { name: form.elements["goodName"].value },
+                Agent: { fullName: form.elements["agentName"].value },
+                receiptDate: form.elements["receiptDate"].value,
+                amount: form.elements["amount"].value,
+                documentNumber: form.elements["documentNumber"].value,
+                feeAmount: form.elements["feeAmount"].value,
+                paymentDate: form.elements["paymentDate"].value,
+                exportDate: form.elements["exportDate"].value
+            };
+            SaveFee(data);
+        });
+
+        GetFees();
+    </script>
+</body>
+</html>
+

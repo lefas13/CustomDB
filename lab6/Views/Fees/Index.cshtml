@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление пошлинами</title>
+</head>
+<body>
+    <h1>Управление пошлинами</h1>
+
+    <h2>Добавить новую пошлину</h2>
+    <form id="createFeeForm">
+        <label for="warehouse">Склада:</label>
+        <input type="text" id="warehouse" required>
+        <br>
+        <label for="good">Товар:</label>
+        <input type="text" id="good" required>
+        <br>
+        <label for="agent">Агент:</label>
+        <input type="text" id="agent" required>
+        <br>
+        <label for="receiptDate">Дата получения:</label>
+        <input type="date" id="receiptDate" required>
+        <br>
+        <label for="amount">Количество товаров:</label>
+        <input type="number" id="amount" required>
+        <br>
+        <label for="documentNumber">Номер документа:</label>
+        <input type="text" id="documentNumber" required>
+        <br>
+        <label for="feeAmount">Стоимость пошлины:</label>
+        <input type="number" id="feeAmount" step="0.01" required>
+        <br>
+        <label for="paymentDate">Дата оплаты:</label>
+        <input type="date" id="paymentDate">
+        <br>
+        <label for="exportDate">Дата отправки:</label>
+        <input type="date" id="exportDate">
+        <br>
+        <button type="submit">Добавить</button>
+    </form>
+
+    <h2>Список пошлин</h2>
+    <table id="feesTable" border="1">
+        <tr>
+            <th>ID</th>
+            <th>Склад</th>
+            <th>Товар</th>
+            <th>Агент</th>
+            <th>Дата получения</th>
+            <th>Количество товаров</th>
+            <th>Номер документа</th>
+            <th>Стоимость пошлины</th>
+            <th>Дата оплаты</th>
+            <th>Дата отправки</th>
+            <th>Действия</th>
+        </tr>
+    </table>
+
+    <script>
+        // Функция для отправки GET-запроса на получение списка пошлин
+        function getFees() {
+            fetch('/api/feesapi') // API URL для получения списка пошлин
+                .then(response => response.json())
+                .then(data => {
+                    const table = document.getElementById('feesTable');
+                    table.innerHTML = `
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Склад</th>
+                                    <th>Товар</th>
+                                    <th>Агент</th>
+                                    <th>Дата получения</th>
+                                    <th>Количество товаров</th>
+                                    <th>Номер документа</th>
+                                    <th>Стоимость пошлины</th>
+                                    <th>Дата оплаты</th>
+                                    <th>Дата отправки</th>
+                                    <th>Действия</th>
+                                </tr>
+                            `;
+                    data.forEach(fee => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                                    <td>${fee.feeId}</td>
+                                    <td>${fee.warehouse ? fee.warehouse.warehouseNumber : ''}</td>
+                                    <td>${fee.good ? fee.good.name : ''}</td>
+                                    <td>${fee.agent ? fee.agent.fullName : ''}</td>
+                                    <td>${fee.receiptDate}</td>
+                                    <td>${fee.amount}</td>
+                                    <td>${fee.documentNumber}</td>
+                                    <td>${fee.feeAmount}</td>
+                                    <td>${fee.paymentDate || ''}</td>
+                                    <td>${fee.exportDate || ''}</td>
+                                    <td>
+                                                <button onclick="editFee(${fee.feeId}, '${fee.warehouse ? fee.warehouse.warehouseNumber : ''}, '${fee.good ? fee.good.name : ''}', '${fee.agent ? fee.agent.fullName : ''}', '${fee.receiptDate}', ${fee.amount}, '${fee.documentNumber}', ${fee.feeAmount}, '${fee.paymentDate || ''}', '${fee.exportDate || ''}')">Редактировать</button>
+                                        <button onclick="deleteFee(${fee.feeId})">Удалить</button>
+                                    </td>
+                                `;
+                        table.appendChild(row);
+                    });
+                });
+        }
+
+        // Функция для отправки POST-запроса на создание новой пошлины
+        function createFee(event) {
+            event.preventDefault();
+            const warehouseNumber = document.getElementById('warehouseNumber').value;
+            const productName = document.getElementById('productName').value;
+            const agentName = document.getElementById('agentName').value;
+            const receiptDate = document.getElementById('receiptDate').value;
+            const amount = document.getElementById('amount').value;
+            const documentNumber = document.getElementById('documentNumber').value;
+            const feeAmount = document.getElementById('feeAmount').value;
+            const paymentDate = document.getElementById('paymentDate').value;
+            const exportDate = document.getElementById('exportDate').value;
+
+            fetch('/api/feesapi', { // API URL для создания новой пошлины
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    warehouseId: warehouse, // Передать объект склада 
+                    goodId: good, // Передать объект товара
+                    agentId: agent, // Передать объект агента
+                    receiptDate: receiptDate,
+                    amount: amount,
+                    documentNumber: documentNumber,
+                    feeAmount: feeAmount,
+                    paymentDate: paymentDate,
+                    exportDate: exportDate
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Пошлина добавлена:', data);
+                    document.getElementById('createFeeForm').reset();
+                    getFees(); // Обновляем список пошлин
+                });
+        }
+
+        // Функция для отправки DELETE-запроса на удаление пошлины
+        function deleteFee(feeId) {
+            fetch(`/api/feesapi/${feeId}`, { // API URL для удаления пошлины
+                method: 'DELETE'
+            })
+                .then(response => {
+                    console.log('Пошлина удалена:', feeId);
+                    getFees(); // Обновляем список пошлин
+                });
+        }
+
+        // Функция для отправки PUT-запроса на обновление пошлины
+        function updateFee(feeId, warehouseId, goodId, agentId, receiptDate, amount, documentNumber, feeAmount, paymentDate, exportDate) {
+            const updatedFee = {
+                Id: feeId,
+                warehouseId: warehouseId,
+                goodId: goodId,
+                agentId: agentId,
+                receiptDate: receiptDate,
+                amount: amount,
+                documentNumber: documentNumber,
+                feeAmount: feeAmount,
+                paymentDate: paymentDate,
+                exportDate: exportDate
+            };
+
+            fetch(`/api/feesapi/${feeId}`, { // API URL для обновления пошлины
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedFee)
+            })
+                .then(response => {
+                    console.log('Пошлина обновлена:', updatedFee);
+                    getFees(); // Обновляем список пошлин
+                });
+        }
+
+        // Функция для заполнения формы редактирования пошлины
+        function editFee(feeId, warehouse, good, agent, receiptDate, amount, documentNumber, feeAmount, paymentDate, exportDate) {
+            document.getElementById('warehouse').value = warehouse;
+            document.getElementById('good').value = good;
+            document.getElementById('agent').value = agent;
+            document.getElementById('receiptDate').value = receiptDate;
+            document.getElementById('amount').value = amount;
+            document.getElementById('documentNumber').value = documentNumber;
+            document.getElementById('feeAmount').value = feeAmount;
+            document.getElementById('paymentDate').value = paymentDate;
+            document.getElementById('exportDate').value = exportDate;
+
+            const updateButton = document.createElement('button');
+            updateButton.textContent = 'Обновить';
+            updateButton.onclick = function () {
+                updateFee(feeId, document.getElementById('warehouse').value, document.getElementById('good').value, document.getElementById('agent').value, document.getElementById('receiptDate').value, document.getElementById('amount').value, document.getElementById('documentNumber').value, document.getElementById('feeAmount').value, document.getElementById('paymentDate').value, document.getElementById('exportDate').value);
+            };
+
+            const form = document.getElementById('createFeeForm');
+            const submitButton = form.querySelector('[type="submit"]');
+            if (submitButton) {
+                form.removeChild(submitButton);
+            }
+            form.appendChild(updateButton);
+        }
+
+        // Загрузка списка пошлин при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function () {
+            getFees();
+        });
+
+        // Добавление обработчика события отправки формы
+        const createFeeForm = document.getElementById('createFeeForm');
+        createFeeForm.addEventListener('submit', createFee);
+    </script>
+</body>
+</html>
